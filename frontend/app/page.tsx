@@ -181,23 +181,67 @@ export default async function Home({ searchParams }: Props) {
     builtYearBand,
   });
 
+  const propertyTypeLabels: Record<PropertyType, string> = {
+    mansion: 'マンション',
+    house: '戸建て',
+  };
+
+  const floorAreaBandLabels: Record<FloorAreaBand, string> = {
+    under30: '30㎡未満',
+    '30_50': '30〜50㎡',
+    '50_70': '50〜70㎡',
+    '70_90': '70〜90㎡',
+    '90_120': '90〜120㎡',
+    over120: '120㎡以上',
+  };
+
+  const builtYearBandLabels: Record<BuiltYearBand, string> = {
+    '0_5': '0〜5年',
+    '6_10': '6〜10年',
+    '11_20': '11〜20年',
+    '21_30': '21〜30年',
+    over31: '31年以上',
+  }
+
+  const selectedStation = stations.find(
+    (station) => station.id === stationId,
+  );
+
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-bold">不動産相場分析アプリ</h1>
-      <p className="mt-4">㎡単価の推移を表示します。</p>
+    <main className="min-h-screen bg-gray-50 p-8 text-gray-900">
+      <div className="mx-auto max-w-7xl">
+        <h1 className="text-2xl font-bold">不動産相場分析アプリ</h1>
+        <p className="mt-4">㎡単価の推移を表示します。</p>
 
-      <div className="mt-8">
-        <MarketPriceFilterForm
-          stations={stations}
-          selectedStationId={stationId}
-          selectedPropertyType={propertyType}
-          selectedFloorAreaBand={floorAreaBand}
-          selectedBuiltYearBand={builtYearBand}
-        />
-      </div>
+        <div className="mt-8">
+          <MarketPriceFilterForm
+            stations={stations}
+            selectedStationId={stationId}
+            selectedPropertyType={propertyType}
+            selectedFloorAreaBand={floorAreaBand}
+            selectedBuiltYearBand={builtYearBand}
+          />
+        </div>
 
-      <div className="mt-8">
-        <MarketPriceChart data={series} />
+        <div className="mt-8 rounded border border-gray-200 bg-white p-4">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">
+              相場推移グラフ
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-600">
+              {selectedStation?.display_name}
+              {' / '}
+              {propertyTypeLabels[propertyType]}
+              {' / '}
+              {floorAreaBandLabels[floorAreaBand]}
+              {' / '}
+              {builtYearBandLabels[builtYearBand]}
+            </p>
+          </div>
+
+          <MarketPriceChart data={series} />
+        </div>
       </div>
     </main>
   )
