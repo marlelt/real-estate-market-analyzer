@@ -22,6 +22,10 @@
 
 - 駅単位での不動産価格分析
 - 面積帯・築年帯によるセグメント分析
+- URLクエリと連動した条件指定UI
+- SSRによる相場推移表示
+- Rechartsを用いた相場推移グラフ
+- p25 / median / p75 の可視化
 - 生データと集計データの分離設計
 - 再集計可能な構造による拡張性
 
@@ -33,14 +37,19 @@
 - Laravel 12
 - PostgreSQL
 
-### Frontend（予定）
-- Next.js（TypeScript）
+### Frontend
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- Recharts
 
-### インフラ
+### Infrastructure
 - Docker
+- Nginx
 
-### 開発環境
+### Development
 - Xdebug
+- Bruno
 
 ### CI/CD（予定）
 - GitHub Actions
@@ -65,6 +74,15 @@ Phase1 開発中
     - built_year_band
 - Unitテスト
 - Featureテスト
+- 駅一覧取得API
+- Next.js + TypeScript フロントエンド実装
+- 条件指定UI
+- URLクエリと連動した状態管理
+- SSRによるデータ取得
+- Rechartsによる相場推移グラフ表示
+- Tooltipによる詳細表示
+- レスポンシブ対応
+- データ0件時UI
 
 ---
 
@@ -91,6 +109,16 @@ Phase1 開発中
     }
 
 ---
+
+## 画面イメージ
+
+条件（駅 / 物件種別 / 面積帯 / 築年帯）を指定し、
+㎡単価の中央値・p25・p75 の推移を確認できます。
+
+条件はURLクエリと連動しており、
+SSRで条件に応じた相場推移データを取得しています。
+
+![相場推移グラフ](docs/images/top.png)
 
 ## 設計のポイント
 
@@ -179,11 +207,10 @@ erDiagram
 
 ## 今後の予定
 
-- フロントエンド実装
-- 相場推移グラフの表示
-- APIレスポンスの改善
+- ローディングUI / エラーUI整備
 - CI/CD整備
-- READMEへの画面キャプチャ追加
+- 相場比較機能
+- エリア別分析機能
 
 ---
 

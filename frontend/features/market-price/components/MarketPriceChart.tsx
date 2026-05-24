@@ -28,7 +28,11 @@ export default function MarketPriceChart({ data }: Props) {
     );
   }
 
-  function formatPrice(value: number): string {
+  function formatYAxisPrice(value: number): string {
+    return `${Math.round(value / 10000)}万円`;
+  }
+
+  function formatTooltipPrice(value: number): string {
     return `${(value / 10000).toFixed(1)}万円`;
   }
 
@@ -44,17 +48,25 @@ export default function MarketPriceChart({ data }: Props) {
 
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <LineChart data={data}>
+      <LineChart
+        data={data}
+        margin={{
+          top: 16,
+          right: 16,
+          left: 32,
+          bottom: 24,
+        }}
+      >
         <CartesianGrid strokeDasharray="3 3" />
 
         <XAxis dataKey="target_month" />
 
-        <YAxis tickFormatter={formatPrice}/>
+        <YAxis tickFormatter={formatYAxisPrice}/>
 
         <Tooltip
           formatter={(value, name) => {
             const formattedValue =
-              typeof value === 'number' ? `${formatPrice(value)}/㎡` : value;
+              typeof value === 'number' ? `${formatTooltipPrice(value)}/㎡` : value;
 
             return [formattedValue, formatSeriesName(String(name))];
         }}
