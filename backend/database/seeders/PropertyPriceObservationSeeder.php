@@ -35,7 +35,7 @@ class PropertyPriceObservationSeeder extends Seeder
          *
          * 徐々に価格上昇するデータにしている
          */
-        $monthlyPrices = [
+        $minatomiraiMonthlyPrices = [
             '2025-11-01' => [46800000, 48200000, 49500000, 50800000, 52200000],
             '2025-12-01' => [47500000, 49000000, 50500000, 52000000, 53600000],
             '2026-01-01' => [48800000, 50500000, 52000000, 53800000, 55500000],
@@ -44,8 +44,45 @@ class PropertyPriceObservationSeeder extends Seeder
             '2026-04-01' => [54800000, 56800000, 59000000, 61500000, 64000000],
         ];
 
-        foreach ($monthlyPrices as $observedOn => $prices) {
+        foreach ($minatomiraiMonthlyPrices as $observedOn => $prices) {
             foreach ($minatomiraiMansions as $index => $property) {
+                PropertyPriceObservation::create([
+                    'property_id' => $property->id,
+                    'observed_on' => $observedOn,
+                    'price_yen' => $prices[$index],
+                ]);
+            }
+        }
+
+        /**
+         * 比較用データ
+         *
+         * 馬車道駅
+         * マンション
+         * 50〜70㎡
+         * 築6〜10年
+         *
+         * みなとみらい駅より少し低めの価格推移にして、
+         * 比較グラフで2駅の差が分かるようにする
+         */
+        $bashamichiMansions = Property::whereHas('station', function ($query) {
+              $query->where('station_name', '馬車道');
+          })
+          ->where('property_type', 'mansion')
+          ->orderBy('id')
+          ->get();
+
+        $bashamichiMonthlyPrices = [
+            '2025-11-01' => [38000000],
+            '2025-12-01' => [39000000],
+            '2026-01-01' => [40500000],
+            '2026-02-01' => [42000000],
+            '2026-03-01' => [43800000],
+            '2026-04-01' => [45800000],
+        ];
+
+        foreach ($bashamichiMonthlyPrices as $observedOn => $prices) {
+            foreach ($bashamichiMansions as $index => $property) {
                 PropertyPriceObservation::create([
                     'property_id' => $property->id,
                     'observed_on' => $observedOn,
@@ -58,11 +95,6 @@ class PropertyPriceObservationSeeder extends Seeder
          * その他駅データ
          */
         $latestPrices  = [
-          [
-              'station_name' => '馬車道',
-              'property_type' => 'mansion',
-              'price_yen' => 56500000,
-          ],
           [
               'station_name' => '日本大通り',
               'property_type' => 'mansion',

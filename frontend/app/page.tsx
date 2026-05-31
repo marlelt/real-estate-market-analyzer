@@ -6,6 +6,7 @@ import { fetchStations } from '@/features/station/api/fetchStations';
 
 // components
 import MarketPriceChart from '@/features/market-price/components/MarketPriceChart';
+import MarketPriceComparisonChart from '@/features/market-price/components/MarketPriceComparisonChart';
 import MarketPriceFilterForm from '@/features/market-price/components/MarketPriceFilterForm';
 
 // types
@@ -19,6 +20,7 @@ type SearchParamValue = string | string[] | undefined;
 
 type SearchParams = {
   station_id?: SearchParamValue;
+  compare_station_id?: SearchParamValue;
   property_type?: SearchParamValue;
   floor_area_band?: SearchParamValue;
   built_year_band?: SearchParamValue;
@@ -114,16 +116,23 @@ export default async function Home({ searchParams }: Props) {
   }
 
   const stationIdParam = getSingleParam(params.station_id);
+  const compareStationIdParam = getSingleParam(params.compare_station_id);
   const propertyTypeParam = getSingleParam(params.property_type);
   const floorAreaBandParam = getSingleParam(params.floor_area_band);
   const builtYearBandParam = getSingleParam(params.built_year_band);
 
   const parsedStationId = parseStationId(stationIdParam);
+  const parsedCompareStationId = parseStationId(compareStationIdParam);
 
   const stationId =
     parsedStationId !== null && stations.some((s) => s.id === parsedStationId)
       ? parsedStationId
       : defaultStationId;
+
+  const compareStationId =
+    parsedCompareStationId !== null && stations.some((s) => s.id === parsedCompareStationId)
+      ? parsedCompareStationId
+      : undefined;
 
   const propertyType: PropertyType = isPropertyType(propertyTypeParam)
     ? propertyTypeParam
@@ -152,6 +161,10 @@ export default async function Home({ searchParams }: Props) {
     built_year_band: builtYearBand,
   });
 
+  if (compareStationId !== undefined) {
+    canonicalParams.set('compare_station_id', String(compareStationId));
+  }
+
   const currentParams = new URLSearchParams();
 
   if (stationIdParam !== undefined) {
@@ -170,16 +183,29 @@ export default async function Home({ searchParams }: Props) {
     currentParams.set('built_year_band', builtYearBandParam);
   }
 
+  if (compareStationIdParam !== undefined) {
+    currentParams.set('compare_station_id', compareStationIdParam);
+  }
+
   if (currentParams.toString() !== canonicalParams.toString()) {
     redirect(`/?${canonicalParams.toString()}`);
   }
 
-  const series =  await fetchMarketPriceSeries({
+  const series = await fetchMarketPriceSeries({
     stationId,
     propertyType,
     floorAreaBand,
     builtYearBand,
   });
+
+  const compareSeries = compareStationId
+    ? await fetchMarketPriceSeries({
+      stationId: compareStationId,
+      propertyType,
+      floorAreaBand,
+      builtYearBand,
+    })
+    : null;
 
   const propertyTypeLabels: Record<PropertyType, string> = {
     mansion: 'マンション',
@@ -207,6 +233,10 @@ export default async function Home({ searchParams }: Props) {
     (station) => station.id === stationId,
   );
 
+  const selectedCompareStation = stations.find(
+    (station) => station.id === compareStationId,
+  );
+
   return (
     <main className="min-h-screen bg-gray-50 p-8 text-gray-900">
       <div className="mx-auto max-w-7xl">
@@ -217,6 +247,7 @@ export default async function Home({ searchParams }: Props) {
           <MarketPriceFilterForm
             stations={stations}
             selectedStationId={stationId}
+            selectedCompareStationId={compareStationId}
             selectedPropertyType={propertyType}
             selectedFloorAreaBand={floorAreaBand}
             selectedBuiltYearBand={builtYearBand}
@@ -240,7 +271,16 @@ export default async function Home({ searchParams }: Props) {
             </p>
           </div>
 
-          <MarketPriceChart data={series} />
+          {compareSeries && selectedCompareStation ? (
+            <MarketPriceComparisonChart
+              baseStationName={selectedStation?.display_name ?? ''}
+              compareStationName={selectedCompareStation.display_name}
+              baseSeries={series}
+              compareSeries={compareSeries}
+            />
+          ) : (
+            <MarketPriceChart data={series} />
+          )}
         </div>
       </div>
     </main>

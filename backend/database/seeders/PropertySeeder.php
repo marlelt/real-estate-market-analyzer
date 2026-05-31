@@ -89,7 +89,7 @@ class PropertySeeder extends Seeder
                 'station_name' => '馬車道',
                 'property_type' => 'mansion',
                 'floor_area_sqm' => 58.70,
-                'built_year' => 2015,
+                'built_year' => 2018,
                 'walk_minutes' => 6,
                 'building_structure' => 'src',
                 'has_parking' => false,

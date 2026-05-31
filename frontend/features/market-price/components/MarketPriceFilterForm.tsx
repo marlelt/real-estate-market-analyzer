@@ -11,6 +11,7 @@ import type { Station } from '@/features/station/types/station';
 type Props = {
   stations: Station[];
   selectedStationId: number;
+  selectedCompareStationId?: number;
   selectedPropertyType: PropertyType;
   selectedFloorAreaBand: FloorAreaBand;
   selectedBuiltYearBand: BuiltYearBand;
@@ -19,6 +20,7 @@ type Props = {
 export default function MarketPriceFilterForm({
   stations,
   selectedStationId,
+  selectedCompareStationId,
   selectedPropertyType,
   selectedFloorAreaBand,
   selectedBuiltYearBand,
@@ -29,13 +31,17 @@ export default function MarketPriceFilterForm({
   const handleChange = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
-    params.set(key, value);
+    if (value === '') {
+      params.delete(key);
+    } else {
+      params.set(key, value);
+    }
 
     router.push(`?${params.toString()}`);
   };
 
   return (
-    <div className="grid gap-4 rounded border border-gray-200 bg-white p-4 md:grid-cols-4">
+    <div className="grid gap-4 rounded border border-gray-200 bg-white p-4 md:grid-cols-5">
       {/* 駅 */}
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-gray-700">駅</label>
@@ -44,6 +50,24 @@ export default function MarketPriceFilterForm({
           onChange={(e) => handleChange('station_id', e.target.value)}
           className="rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
         >
+          {stations.map((station) => (
+            <option key={station.id} value={station.id}>
+              {station.display_name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* 比較駅 */}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium text-gray-700">比較駅</label>
+        <select
+          value={selectedCompareStationId !== undefined ? String(selectedCompareStationId) : ''}
+          onChange={(e) => handleChange('compare_station_id', e.target.value)}
+          className="rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+        >
+          <option value="">比較しない</option>
+
           {stations.map((station) => (
             <option key={station.id} value={station.id}>
               {station.display_name}
