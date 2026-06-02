@@ -11,6 +11,8 @@ import {
   YAxis,
 } from 'recharts';
 
+import { formatPricePerSqm } from '../utils/formatPricePerSqm';
+
 import type { MarketPriceSeries } from '../types/marketPrice';
 
 type Props = {
@@ -24,7 +26,7 @@ type ChartRow = {
   target_month: string;
   base_median_price_per_sqm?: number;
   compare_median_price_per_sqm?: number;
-}
+};
 
 export default function MarketPriceComparisonChart({
   baseStationName,
@@ -48,8 +50,8 @@ export default function MarketPriceComparisonChart({
       target_month: row.target_month,
       base_median_price_per_sqm: existingRow?.base_median_price_per_sqm,
       compare_median_price_per_sqm: row.median_price_per_sqm,
-    })
-  })
+    });
+  });
 
   const chartData = Array.from(rowsByMonth.values()).sort((a, b) =>
     a.target_month.localeCompare(b.target_month),
@@ -66,11 +68,28 @@ export default function MarketPriceComparisonChart({
   return (
     <div className="h-96">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData}>
+        <LineChart
+          data={chartData}
+          margin={{
+            top: 16,
+            right: 16,
+            left: 72,
+            bottom: 24,
+          }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="target_month" />
-          <YAxis />
-          <Tooltip />
+          <YAxis
+            width={88}
+            tickFormatter={formatPricePerSqm}
+          />
+          <Tooltip
+            formatter={(value) =>
+              typeof value === 'number'
+                ? formatPricePerSqm(value)
+                : value
+            }
+          />
           <Legend />
 
           <Line
