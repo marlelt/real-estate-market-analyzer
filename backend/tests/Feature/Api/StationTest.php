@@ -12,7 +12,7 @@ class StationTest extends TestCase
 
     public function test_駅一覧を取得できる(): void
     {
-        Station::query()->create([
+        $station = Station::query()->create([
             'line_name' => '東横線',
             'station_name' => '横浜',
             'display_name' => '東横線 横浜',
@@ -25,7 +25,7 @@ class StationTest extends TestCase
             ->assertJson([
                 'data' => [
                     [
-                        'id' => 1,
+                        'id' => $station->id,
                         'display_name' => '東横線 横浜',
                     ],
                 ],
