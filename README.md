@@ -51,8 +51,20 @@
 - Xdebug
 - Bruno
 
-### CI/CD（予定）
+### CI
+
 - GitHub Actions
+
+#### 自動実行内容
+
+Frontend
+
+- npm run lint
+- npm run typecheck
+
+Backend
+
+- php artisan test
 
 ---
 
@@ -74,6 +86,10 @@ Phase1 開発中
     - built_year_band
 - Unitテスト
 - Featureテスト
+- GitHub ActionsによるCI構築
+- Frontend lint自動実行
+- Frontend typecheck自動実行
+- Backendテスト自動実行
 - 駅一覧取得API
 - Next.js + TypeScript フロントエンド実装
 - 条件指定UI
@@ -207,10 +223,11 @@ erDiagram
 
 ## 今後の予定
 
-- ローディングUI / エラーUI整備
-- CI/CD整備
-- 相場比較機能
 - エリア別分析機能
+- エリア比較機能
+- モバイルUI改善
+- デプロイ環境構築
+- CD（自動デプロイ）導入
 
 ---
 
